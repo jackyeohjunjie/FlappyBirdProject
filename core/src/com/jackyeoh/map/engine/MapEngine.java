@@ -66,13 +66,14 @@ public class MapEngine {
 
     public List<TubeModel> getCoords(){
         for(int i = 0; i < numberOfTubes; i++) {
+            TubeModel tubeModel = tubeYPositions.get(i);
             float offsetVal = tubeBottomYPositions[i] + offsetConstant;
-            tubeYPositions.get(i).setxPos((tubeXPositions[i]));
-            tubeYPositions.get(i).setBottomY(0);
-            tubeYPositions.get(i).setBottomHeight(tubeBottomYPositions[i]);
-            tubeYPositions.get(i).setTopY(offsetVal);
-            tubeYPositions.get(i).setTopHeight(Gdx.graphics.getHeight() - offsetVal);
-            tubeYPositions.get(i).setWidth(tubeWidth);
+            tubeModel.setxPos((tubeXPositions[i]));
+            tubeModel.setBottomY(0);
+            tubeModel.setBottomHeight(tubeBottomYPositions[i]);
+            tubeModel.setTopY(offsetVal);
+            tubeModel.setTopHeight(Gdx.graphics.getHeight() - offsetVal);
+            tubeModel.setWidth(tubeWidth);
         }
         return tubeYPositions;
     }

@@ -72,17 +72,18 @@ public class Game extends ApplicationAdapter {
 
         if(gameOngoing) {
             gravityEngine.calibrateCoords();
-            gameCoordinator.setBirdPosition(gravityEngine.getCoords(BIRD_TAG), birdRadius);
             mapEngine.calibratePos();
-            gameCoordinator.setTubePositions(mapEngine.getCoords());
+
+            if (Gdx.input.justTouched()) {
+                gravityEngine.jumpOnModel(BIRD_TAG, Direction.UP);
+            }
+
+            if(!gameCoordinator.getGameState()) {
+                gameOngoing = false;
+            }
         }
 
-        if(gameOngoing && !gameCoordinator.getGameState()) {
-            gameOngoing = false;
-        }
-
-        if (Gdx.input.justTouched()) {
-           gravityEngine.jumpOnModel(BIRD_TAG, Direction.UP);
-        }
+        gameCoordinator.setBirdPosition(gravityEngine.getCoords(BIRD_TAG), birdRadius);
+        gameCoordinator.setTubePositions(mapEngine.getCoords());
     }
 }
