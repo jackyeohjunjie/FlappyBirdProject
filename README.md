@@ -1,3 +1,2 @@
 # flappystuff
-This is a flappybird clone for the android app
-"# FlappyBirdProject" 
+Flappy bird clone! This time, with some abstraction so I can reuse some java files for future projects 
