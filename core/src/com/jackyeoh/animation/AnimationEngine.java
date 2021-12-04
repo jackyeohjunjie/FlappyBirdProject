@@ -3,60 +3,41 @@ package com.jackyeoh.animation;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
 import com.jackyeoh.gravity.engine.GravityEngine;
 import com.jackyeoh.map.engine.MapEngine;
 import com.jackyeoh.map.model.TubeModel;
 
 import java.util.List;
 
-public class AnimationEngine {
+public class AnimationEngine extends AbstractAnimation{
 
-    private String atlasPath;
-    private String topTubePath;
-    private String bottmTubePath;
-    private String backGroundPath;
     private String birdTag;
     private float birdRadius;
-    private float stateTime;
 
     private MapEngine mapEngine;
     private GravityEngine gravityEngine;
 
-    private SpriteBatch batch;
     private Texture background;
-    private TextureAtlas atlas;
     private Animation<TextureRegion> birdAnimation;
     private Texture bottomTube;
     private Texture topTube;
 
     public AnimationEngine(String atlasPath, String topTubePath, String bottmTubePath, String backGroundPath, MapEngine mapEngine, GravityEngine gravityEngine, String birdTag, float birdRadius){
 
-        this.atlasPath = atlasPath;
-        this.topTubePath = topTubePath;
-        this.bottmTubePath = bottmTubePath;
-        this.backGroundPath = backGroundPath;
+        super();
         this.mapEngine = mapEngine;
         this.gravityEngine = gravityEngine;
         this.birdRadius = birdRadius;
         this.birdTag = birdTag;
 
-        batch = new SpriteBatch();
         background = new Texture(backGroundPath);
 
-        atlas = new TextureAtlas(atlasPath);
-        Array<TextureAtlas.AtlasRegion> ArrayOfRegions = new Array<>();
-        ArrayOfRegions.add(atlas.findRegion("bird"));
-        ArrayOfRegions.add(atlas.findRegion("bird2"));
-        birdAnimation = new Animation<TextureRegion>(0.33f, ArrayOfRegions, Animation.PlayMode.LOOP);
+        birdAnimation = new Animation<TextureRegion>(0.33f, new TextureAtlas(atlasPath).findRegions(birdTag), Animation.PlayMode.LOOP);
         bottomTube = new Texture(bottmTubePath);
         topTube = new Texture(topTubePath);
 
-        // A variable for tracking elapsed time for the animation
-        stateTime = 0f;
     }
 
     public void animate() {
@@ -77,12 +58,8 @@ public class AnimationEngine {
         }
     }
 
-    public void updateStateTime(){
-        stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
-    }
 
-    public SpriteBatch getSpriteBatch(){
-        return batch;
-    }
+
+
 
 }
