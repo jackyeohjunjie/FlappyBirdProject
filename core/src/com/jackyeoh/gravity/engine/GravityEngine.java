@@ -50,7 +50,6 @@ public class GravityEngine {
         modelHashMap.put(description,new GravityModel(posXcoords, posYcoords, START_ACCELERATION, jumpRate, FALL_VAL, radius, gravDirection, bounded));
     }
 
-    //up = 0, left = 1, right = 2
     public void jumpOnModel(String name, GravityConstants.Direction direction) {
 
         if(modelHashMap.containsKey(name)) {

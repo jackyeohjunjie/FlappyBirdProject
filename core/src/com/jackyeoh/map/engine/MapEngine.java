@@ -19,7 +19,7 @@ public class MapEngine {
     private float[] tubeXPositions;
     private float[] tubeBottomYPositions;
     private List<TubeModel> tubeYPositions;
-    Random randomGenerator;
+    private Random randomGenerator;
 
     public MapEngine(int numberOfTubes, int distanceBetweenTubes, int startPosition, float tubeWidth, float tubeMaxHeight, int speed, float offsetConstant) {
         this.numberOfTubes = numberOfTubes;

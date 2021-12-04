@@ -2,27 +2,36 @@ package com.jackyeoh.flappy;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Array;
+import com.jackyeoh.animation.AnimationEngine;
 import com.jackyeoh.coordinator.GameCoordinator;
 import com.jackyeoh.gravity.engine.GravityEngine;
 import com.jackyeoh.gravity.util.GravityConstants;
 import com.jackyeoh.gravity.util.GravityConstants.Direction;
 import com.jackyeoh.map.engine.MapEngine;
+import com.jackyeoh.map.model.TubeModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Game extends ApplicationAdapter {
 
+    private static final String BIRD_TAG = "bird";
     private static final int NUMBER_OF_TUBES = 4;
     private static final int JUMP_RATE = 15;
     private static final int STARTING_SPEED = 5;
-    private static final String BIRD_TAG = "bird";
 
-    Texture background;
-    SpriteBatch batch;
-
-    MapEngine mapEngine;
-    GameCoordinator gameCoordinator;
-    GravityEngine gravityEngine;
+    private MapEngine mapEngine;
+    private GameCoordinator gameCoordinator;
+    private GravityEngine gravityEngine;
+    private AnimationEngine animationEngine;
 
     private float tubeWidth;
     private float tubeHeight;
@@ -44,9 +53,7 @@ public class Game extends ApplicationAdapter {
         tubeWidth =  Gdx.graphics.getWidth() / 5;
         tubeSpeed = STARTING_SPEED;
 
-        //Background texture
-        batch = new SpriteBatch();
-        background = new Texture("bg.png");
+
 
         //Enable gravity on bird
         gravityEngine = new GravityEngine(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -56,34 +63,42 @@ public class Game extends ApplicationAdapter {
         mapEngine = new MapEngine(NUMBER_OF_TUBES, distanceBetweenTubes, Gdx.graphics.getWidth(), tubeWidth, tubeHeight, tubeSpeed, offsetConstant);
 
         //Coordinate map and model
-        gameCoordinator = new GameCoordinator(NUMBER_OF_TUBES, birdRadius, true);
+        gameCoordinator = new GameCoordinator(NUMBER_OF_TUBES, birdRadius, false);
+
+        //Animation Engine
+        animationEngine = new AnimationEngine("bird.atlas", "toptube.png", "bottomtube.png","bg.png",mapEngine,gravityEngine,BIRD_TAG,birdRadius);
     }
 
     @Override
     public void dispose() {
-        batch.dispose();
+        animationEngine.getSpriteBatch().dispose();
     }
 
     @Override
     public void render() {
-        batch.begin();
-        batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch.end();
+
+        animationEngine.animate();
 
         if(gameOngoing) {
-            gravityEngine.calibrateCoords();
-            mapEngine.calibratePos();
+
+            animationEngine.updateStateTime();
+
+            if(!gameCoordinator.getGameState()) {
+                gameOngoing = false;
+            }
 
             if (Gdx.input.justTouched()) {
                 gravityEngine.jumpOnModel(BIRD_TAG, Direction.UP);
             }
 
-            if(!gameCoordinator.getGameState()) {
-                gameOngoing = false;
-            }
-        }
+            gravityEngine.calibrateCoords();
+            mapEngine.calibratePos();
 
-        gameCoordinator.setBirdPosition(gravityEngine.getCoords(BIRD_TAG), birdRadius);
-        gameCoordinator.setTubePositions(mapEngine.getCoords());
+            gameCoordinator.setBirdPosition(gravityEngine.getCoords(BIRD_TAG), birdRadius);
+            gameCoordinator.setTubePositions(mapEngine.getCoords());
+
+        }
     }
+
+
 }

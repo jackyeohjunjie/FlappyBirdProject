@@ -78,11 +78,9 @@ public class GameCoordinator {
                 return false;
             }
         }
-
         if(birdYpos <= birdRadius) {
             return false;
         }
-
         return true;
     }
 
