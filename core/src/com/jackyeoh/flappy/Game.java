@@ -2,24 +2,12 @@ package com.jackyeoh.flappy;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.Array;
 import com.jackyeoh.animation.AnimationEngine;
 import com.jackyeoh.coordinator.GameCoordinator;
 import com.jackyeoh.gravity.engine.GravityEngine;
 import com.jackyeoh.gravity.util.GravityConstants;
 import com.jackyeoh.gravity.util.GravityConstants.Direction;
 import com.jackyeoh.map.engine.MapEngine;
-import com.jackyeoh.map.model.TubeModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Game extends ApplicationAdapter {
 
@@ -52,8 +40,6 @@ public class Game extends ApplicationAdapter {
         distanceBetweenTubes = Gdx.graphics.getWidth() / 2;
         tubeWidth =  Gdx.graphics.getWidth() / 5;
         tubeSpeed = STARTING_SPEED;
-
-
 
         //Enable gravity on bird
         gravityEngine = new GravityEngine(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -99,6 +85,5 @@ public class Game extends ApplicationAdapter {
 
         }
     }
-
 
 }
