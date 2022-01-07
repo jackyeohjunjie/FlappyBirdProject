@@ -52,7 +52,7 @@ public class Game extends ApplicationAdapter {
         gameCoordinator = new GameCoordinator(NUMBER_OF_TUBES, birdRadius, false);
 
         //Animation Engine
-        animationEngine = new AnimationEngine("bird.atlas", "toptube.png", "bottomtube.png","bg.png",mapEngine, gravityEngine, BIRD_TAG, birdRadius);
+        animationEngine = new AnimationEngine("num.atlas","bird.atlas", "toptube.png", "bottomtube.png","bg.png", mapEngine, gravityEngine, BIRD_TAG, birdRadius);
     }
 
     @Override
@@ -63,10 +63,9 @@ public class Game extends ApplicationAdapter {
     @Override
     public void render() {
 
-        animationEngine.animate();
+        animationEngine.animate(gameCoordinator.getScore());
 
         if(gameOngoing) {
-
             animationEngine.updateStateTime();
 
             if(!gameCoordinator.getGameState()) {
@@ -81,8 +80,7 @@ public class Game extends ApplicationAdapter {
             mapEngine.calibratePos();
 
             gameCoordinator.setBirdPosition(gravityEngine.getCoords(BIRD_TAG), birdRadius);
-            gameCoordinator.setTubePositions(mapEngine.getCoords());
-
+            gameCoordinator.setTubePositions(mapEngine.getCoords() , distanceBetweenTubes);
         }
     }
 

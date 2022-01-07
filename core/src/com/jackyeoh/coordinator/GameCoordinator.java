@@ -21,11 +21,15 @@ public class GameCoordinator {
     private Rectangle[] topTubeRectangle;
     private Rectangle[] bottomTubeRectangle;
     private ShapeRenderer shapeRenderer;
+    private int scoringTube;
+    private int score;
 
     public GameCoordinator(int numberOfTubes, float birdRadius, boolean enableDebug){
         this.numberOfTubes = numberOfTubes;
         this.birdRadius = birdRadius;
         this.enableDebug = enableDebug;
+        this.scoringTube = 0;
+        this.score = 0;
         birdYpos = Gdx.graphics.getHeight();
         bottomTubeRectangle = new Rectangle[numberOfTubes];
         topTubeRectangle = new Rectangle[numberOfTubes];
@@ -40,7 +44,7 @@ public class GameCoordinator {
         }
     }
 
-    public void setTubePositions(List<TubeModel> tubeCoords) {
+    public void setTubePositions(List<TubeModel> tubeCoords, float midPoint) {
         for(int i = 0; i < numberOfTubes; i++) {
             TubeModel tubeModel = tubeCoords.get(i);
             bottomTubeRectangle[i].set(tubeModel.getxPos(), tubeModel.getBottomY(), tubeModel.getWidth(), tubeModel.getBottomHeight());
@@ -58,7 +62,30 @@ public class GameCoordinator {
                 shapeRenderer.end();
 
             }
+
+            calculateScore(tubeCoords, midPoint);
         }
+    }
+
+    private void calculateScore(List<TubeModel> tubeCoords, float midPoint) {
+        if(tubeCoords.get(scoringTube).getxPos() < midPoint) {
+
+            if(score < 999){
+                score++;
+            } else {
+                score = 0;
+            }
+
+            if(scoringTube < numberOfTubes - 1) {
+                scoringTube ++;
+            } else {
+                scoringTube = 0;
+            }
+        }
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public void setBirdPosition(float[] birdPosition, float birdRadius) {
