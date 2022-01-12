@@ -2,7 +2,9 @@ package com.jackyeoh.flappy;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Timer;
 import com.jackyeoh.animation.AnimationEngine;
+import com.jackyeoh.coordinator.AppStateConstants;
 import com.jackyeoh.coordinator.GameCoordinator;
 import com.jackyeoh.gravity.engine.GravityEngine;
 import com.jackyeoh.gravity.util.GravityConstants;
@@ -27,13 +29,13 @@ public class Game extends ApplicationAdapter {
     private float offsetConstant;
     private int distanceBetweenTubes;
     private int tubeSpeed;
-    private boolean gameOngoing;
+//    private boolean gameOngoing;
 
     @Override
     public void create() {
 
         //Necessary calculations
-        gameOngoing = true;
+//        gameOngoing = true;
         tubeHeight = Gdx.graphics.getHeight() / 2;
         birdRadius = Gdx.graphics.getHeight() / 30;
         offsetConstant = Gdx.graphics.getHeight() / 4;
@@ -63,25 +65,48 @@ public class Game extends ApplicationAdapter {
     @Override
     public void render() {
 
-        animationEngine.animate(gameCoordinator.getScore());
+        switch(gameCoordinator.getAppState()) {
+            case START:
+                Gdx.app.log("STATE","Showing Cover Screen...");
+                Gdx.app.log("STATE","Setting to ONGOING..");
+                gameCoordinator.setAppState(AppStateConstants.AppState.ONGOING);
+                break;
+            case SETUP:
+                mapEngine.resetTubes();
+                gravityEngine.resetOnModel(BIRD_TAG,GravityConstants.StartPositionX.MIDDLE, GravityConstants.StartPositionY.MIDDLE);
+                if (Gdx.input.justTouched()) {
+                    Gdx.app.log("STATE","Setting to ONGOING..");
+                    gameCoordinator.setAppState(AppStateConstants.AppState.ONGOING);
+                }
+                break;
+            case ONGOING:
+                animationEngine.animateGame(gameCoordinator.getScore());
+                gameCoordinator.setBirdPosition(gravityEngine.getCoords(BIRD_TAG), birdRadius);
+                gameCoordinator.setTubePositions(mapEngine.getCoords() , distanceBetweenTubes);
+                if(gameCoordinator.getGameState()) {
+                    animationEngine.updateStateTime();
 
-        if(gameOngoing) {
-            animationEngine.updateStateTime();
+                    if (Gdx.input.justTouched()) {
+                        gravityEngine.jumpOnModel(BIRD_TAG, Direction.UP);
+                    }
 
-            if(!gameCoordinator.getGameState()) {
-                gameOngoing = false;
-            }
+                    gravityEngine.calibrateCoords();
+                    mapEngine.calibratePos();
 
-            if (Gdx.input.justTouched()) {
-                gravityEngine.jumpOnModel(BIRD_TAG, Direction.UP);
-            }
 
-            gravityEngine.calibrateCoords();
-            mapEngine.calibratePos();
-
-            gameCoordinator.setBirdPosition(gravityEngine.getCoords(BIRD_TAG), birdRadius);
-            gameCoordinator.setTubePositions(mapEngine.getCoords() , distanceBetweenTubes);
+                } else {
+                    Gdx.app.log("STATE","Setting to END..");
+                    gameCoordinator.setAppState(AppStateConstants.AppState.END);
+                }
+                break;
+            case END:
+                if (Gdx.input.justTouched()) {
+                    Gdx.app.log("STATE","Setting to SETUP..");
+                    gameCoordinator.setAppState(AppStateConstants.AppState.SETUP);
+                }
+                break;
         }
+
     }
 
 }

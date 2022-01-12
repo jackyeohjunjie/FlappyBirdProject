@@ -36,6 +36,14 @@ public class MapEngine {
 
         randomGenerator = new Random();
 
+        setTubes();
+    }
+
+    public void resetTubes() {
+        setTubes();
+    }
+
+    private void setTubes(){
         for(int i = 0; i < numberOfTubes; i++) {
             tubeBottomYPositions[i] = (float)(tubeMaxHeight - ((randomGenerator.nextFloat() * 0.5) * tubeMaxHeight));
             if(i == 0) {

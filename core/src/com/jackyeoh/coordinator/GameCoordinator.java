@@ -23,6 +23,7 @@ public class GameCoordinator {
     private ShapeRenderer shapeRenderer;
     private int scoringTube;
     private int score;
+    private AppStateConstants.AppState appState;
 
     public GameCoordinator(int numberOfTubes, float birdRadius, boolean enableDebug){
         this.numberOfTubes = numberOfTubes;
@@ -42,6 +43,7 @@ public class GameCoordinator {
         if(enableDebug) {
             shapeRenderer = new ShapeRenderer();
         }
+        this.appState = AppStateConstants.AppState.START;
     }
 
     public void setTubePositions(List<TubeModel> tubeCoords, float midPoint) {
@@ -99,16 +101,29 @@ public class GameCoordinator {
         }
     }
 
+    public void setAppState(AppStateConstants.AppState appState) {
+        this.appState = appState;
+        if(appState == AppStateConstants.AppState.SETUP) {
+            score = 0;
+            scoringTube = 0;
+        }
+    }
+
+    public AppStateConstants.AppState getAppState() {
+        return appState;
+    }
+
     public boolean getGameState() {
         for (int i = 0; i < numberOfTubes; i++) {
             if(Intersector.overlaps(birdCircle, topTubeRectangle[i]) || Intersector.overlaps(birdCircle, bottomTubeRectangle[i])){
+                Gdx.app.log("STATE","End due to overlap");
                 return false;
             }
         }
         if(birdYpos <= birdRadius) {
+            Gdx.app.log("STATE","End due to floor");
             return false;
         }
         return true;
     }
-
 }

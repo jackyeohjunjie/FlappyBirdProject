@@ -1,9 +1,10 @@
 package com.jackyeoh.coordinator;
 
-public class GameStateConstants {
+public class AppStateConstants {
 
-    public enum GameState {
+    public enum AppState {
         START,
+        SETUP,
         ONGOING,
         END
     }

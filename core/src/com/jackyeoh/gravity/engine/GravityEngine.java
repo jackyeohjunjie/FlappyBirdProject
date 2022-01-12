@@ -1,5 +1,6 @@
 package com.jackyeoh.gravity.engine;
 
+import com.badlogic.gdx.Gdx;
 import com.jackyeoh.gravity.model.GravityModel;
 import com.jackyeoh.gravity.util.GravityConstants;
 import com.jackyeoh.gravity.util.GravityConstants.Direction;
@@ -48,6 +49,28 @@ public class GravityEngine {
         }
 
         modelHashMap.put(description,new GravityModel(posXcoords, posYcoords, START_ACCELERATION, jumpRate, FALL_VAL, radius, gravDirection, bounded));
+    }
+
+    public void resetOnModel(String description, GravityConstants.StartPositionX posx, GravityConstants.StartPositionY posy) {
+        GravityModel model = modelHashMap.get(description);
+
+        if(posx == GravityConstants.StartPositionX.LEFT_EDGE) {
+            model.setxPos(0);
+        } else if(posx == GravityConstants.StartPositionX.MIDDLE) {
+            model.setxPos(width / 2);
+        } else if (posx == GravityConstants.StartPositionX.RIGHT_EDGE) {
+            model.setxPos(width);
+        }
+
+        if(posy == GravityConstants.StartPositionY.BOTTOM_EDGE) {
+            model.setyPos(0);
+        } else if(posy == GravityConstants.StartPositionY.MIDDLE) {
+            model.setyPos(height / 2);
+        } else if (posy == GravityConstants.StartPositionY.TOP_EDGE) {
+            model.setyPos(height);
+        }
+
+        model.setAcceleration(START_ACCELERATION);
     }
 
     public void jumpOnModel(String name, GravityConstants.Direction direction) {

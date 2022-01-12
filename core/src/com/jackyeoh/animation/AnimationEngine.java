@@ -43,7 +43,7 @@ public class AnimationEngine extends AbstractAnimation{
 
     }
 
-    public void animate(int score) {
+    public void animateGame(int score) {
         batch.begin();
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         drawTubes(mapEngine.getCoords());
