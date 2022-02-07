@@ -14,9 +14,10 @@ public class GravityModel {
     private int jumpCount;
     private int jumpFrames;
     private GravityConstants.Direction jumpDirection;
+    private float rotation;
     private boolean bounded;
 
-    public GravityModel(float xPos, float yPos, float acceleration, int jumpRate, float fallVal, float radius, boolean gravityState, boolean bounded) {
+    public GravityModel(float xPos, float yPos, float acceleration, int jumpRate, float fallVal, float radius, boolean gravityState, boolean bounded, float rotation) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.acceleration = acceleration;
@@ -25,6 +26,7 @@ public class GravityModel {
         this.radius = radius;
         this.gravityState = gravityState;
         this.bounded = bounded;
+        this.rotation = rotation;
         jumpFrames = 0;
         jumpCount = 0;
         jumpDirection = Direction.UP;
@@ -118,5 +120,11 @@ public class GravityModel {
         this.fallVal = fallVal;
     }
 
+    public float getRotation() {
+        return rotation;
+    }
 
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
+    }
 }

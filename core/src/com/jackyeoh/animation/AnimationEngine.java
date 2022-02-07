@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import com.jackyeoh.coordinator.AppStateConstants;
 import com.jackyeoh.gravity.engine.GravityEngine;
 import com.jackyeoh.map.engine.MapEngine;
 import com.jackyeoh.map.model.TubeModel;
@@ -24,9 +25,13 @@ public class AnimationEngine extends AbstractAnimation{
     private Animation<TextureRegion> birdAnimation;
     private Texture bottomTube;
     private Texture topTube;
+    private Texture splashBg;
+    private Texture logo;
+    private Texture pressToStart;
+    private Texture gameOverLogo;
     private Array<TextureAtlas.AtlasRegion> numbers;
 
-    public AnimationEngine(String numberAtlasPath, String birdAtlasPath, String topTubePath, String bottmTubePath, String backGroundPath, MapEngine mapEngine, GravityEngine gravityEngine, String birdTag, float birdRadius){
+    public AnimationEngine(String numberAtlasPath, String birdAtlasPath, String topTubePath, String bottmTubePath, String backGroundPath, String splashBackGroundPath, String splashLogoPath, String startLogoPath, String gameOverPath, MapEngine mapEngine, GravityEngine gravityEngine, String birdTag, float birdRadius){
 
         super();
         this.mapEngine = mapEngine;
@@ -36,19 +41,39 @@ public class AnimationEngine extends AbstractAnimation{
 
         background = new Texture(backGroundPath);
         numbers = new TextureAtlas(numberAtlasPath).findRegions("numbers");
-
+        logo = new Texture(splashLogoPath);
+        pressToStart = new Texture(startLogoPath);
+        gameOverLogo = new Texture(gameOverPath);
+        splashBg = new Texture(splashBackGroundPath);
         birdAnimation = new Animation<TextureRegion>(0.25f, new TextureAtlas(birdAtlasPath).findRegions(birdTag), Animation.PlayMode.LOOP);
         bottomTube = new Texture(bottmTubePath);
         topTube = new Texture(topTubePath);
 
     }
 
-    public void animateGame(int score) {
+    public void animateSplashScreen() {
+        batch.begin();
+        batch.draw(splashBg,0 , 0,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(logo,Gdx.graphics.getWidth() /4 , Gdx.graphics.getHeight() / 3,Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        batch.end();
+    }
+
+    public void animateGame(int score, AppStateConstants.AppState appState) {
         batch.begin();
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        drawTubes(mapEngine.getCoords());
-        drawScore(score);
-        batch.draw(birdAnimation.getKeyFrame(stateTime, true), gravityEngine.getCoords(birdTag)[0] - birdRadius, gravityEngine.getCoords(birdTag)[1] - birdRadius, birdRadius * 2, birdRadius * 2);
+        if(appState == AppStateConstants.AppState.ONGOING) {
+            drawTubes(mapEngine.getCoords());
+            drawScore(score);
+            batch.draw(birdAnimation.getKeyFrame(stateTime, true), gravityEngine.getCoords(birdTag)[0] - birdRadius, gravityEngine.getCoords(birdTag)[1] - birdRadius, birdRadius ,birdRadius,birdRadius * 2, birdRadius * 2,1,1,gravityEngine.getCoords(birdTag)[2],true);
+        } else if(appState == AppStateConstants.AppState.SETUP) {
+            batch.draw(pressToStart,Gdx.graphics.getWidth() /4 ,Gdx.graphics.getHeight() / 4, Gdx.graphics.getWidth() /2 , Gdx.graphics.getHeight() /2);
+        } else if(appState == AppStateConstants.AppState.END) {
+            drawTubes(mapEngine.getCoords());
+            drawScore(score);
+            batch.draw(birdAnimation.getKeyFrame(stateTime, true), gravityEngine.getCoords(birdTag)[0] - birdRadius, gravityEngine.getCoords(birdTag)[1] - birdRadius, birdRadius ,birdRadius,birdRadius * 2, birdRadius * 2,1,1,gravityEngine.getCoords(birdTag)[2],true);
+            batch.draw(gameOverLogo,Gdx.graphics.getWidth() /6 ,Gdx.graphics.getHeight() / 2, (Gdx.graphics.getWidth() /6) * 4, Gdx.graphics.getHeight() /5);
+        }
+
         batch.end();
     }
 

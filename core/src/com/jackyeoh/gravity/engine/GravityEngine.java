@@ -1,6 +1,5 @@
 package com.jackyeoh.gravity.engine;
 
-import com.badlogic.gdx.Gdx;
 import com.jackyeoh.gravity.model.GravityModel;
 import com.jackyeoh.gravity.util.GravityConstants;
 import com.jackyeoh.gravity.util.GravityConstants.Direction;
@@ -48,7 +47,7 @@ public class GravityEngine {
             gravDirection = false;
         }
 
-        modelHashMap.put(description,new GravityModel(posXcoords, posYcoords, START_ACCELERATION, jumpRate, FALL_VAL, radius, gravDirection, bounded));
+        modelHashMap.put(description,new GravityModel(posXcoords, posYcoords, START_ACCELERATION, jumpRate, FALL_VAL, radius, gravDirection, bounded, 90));
     }
 
     public void resetOnModel(String description, GravityConstants.StartPositionX posx, GravityConstants.StartPositionY posy) {
@@ -69,7 +68,7 @@ public class GravityEngine {
         } else if (posy == GravityConstants.StartPositionY.TOP_EDGE) {
             model.setyPos(height);
         }
-
+        model.setRotation(90);
         model.setAcceleration(START_ACCELERATION);
     }
 
@@ -77,6 +76,11 @@ public class GravityEngine {
 
         if(modelHashMap.containsKey(name)) {
             GravityModel model = modelHashMap.get(name);
+
+            if(model.getRotation() <= 115) {
+                model.setRotation(model.getRotation() + 25);
+            }
+
             if(model.getJumpCount() < 2) {
 
                 model.setAcceleration(-model.getJumpRate());
@@ -94,6 +98,10 @@ public class GravityEngine {
     public void calibrateCoords() {
         for(GravityModel model : modelHashMap.values()) {
             model.setAcceleration(model.getAcceleration()  + model.getFallVal());
+            if (model.getRotation() >= 50) {
+                model.setRotation(model.getRotation() - 1);
+            }
+
             if(model.isGravityState()) {
                  model.setyPos(model.getyPos() - model.getAcceleration());
             } else {
@@ -137,11 +145,12 @@ public class GravityEngine {
     }
 
     public float[] getCoords(String name) {
-        float [] coords = new float[2];
+        float [] coords = new float[3];
         if(modelHashMap.containsKey(name)) {
             GravityModel model = modelHashMap.get(name);
             coords[0] = model.getxPos();
             coords[1] = model.getyPos();
+            coords[2] = model.getRotation();
         }
         return coords;
     }

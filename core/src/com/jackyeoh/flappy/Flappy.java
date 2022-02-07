@@ -2,7 +2,7 @@ package com.jackyeoh.flappy;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.jackyeoh.animation.AnimationEngine;
 import com.jackyeoh.coordinator.AppStateConstants;
 import com.jackyeoh.coordinator.GameCoordinator;
@@ -11,7 +11,7 @@ import com.jackyeoh.gravity.util.GravityConstants;
 import com.jackyeoh.gravity.util.GravityConstants.Direction;
 import com.jackyeoh.map.engine.MapEngine;
 
-public class Game extends ApplicationAdapter {
+public class Flappy extends ApplicationAdapter {
 
     private static final String BIRD_TAG = "bird";
     private static final int NUMBER_OF_TUBES = 4;
@@ -29,19 +29,19 @@ public class Game extends ApplicationAdapter {
     private float offsetConstant;
     private int distanceBetweenTubes;
     private int tubeSpeed;
-//    private boolean gameOngoing;
+    private long startTime;
 
     @Override
     public void create() {
 
         //Necessary calculations
-//        gameOngoing = true;
         tubeHeight = Gdx.graphics.getHeight() / 2;
         birdRadius = Gdx.graphics.getHeight() / 30;
         offsetConstant = Gdx.graphics.getHeight() / 4;
         distanceBetweenTubes = Gdx.graphics.getWidth() / 2;
         tubeWidth =  Gdx.graphics.getWidth() / 5;
         tubeSpeed = STARTING_SPEED;
+        startTime = TimeUtils.millis();
 
         //Enable gravity on bird
         gravityEngine = new GravityEngine(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -54,7 +54,7 @@ public class Game extends ApplicationAdapter {
         gameCoordinator = new GameCoordinator(NUMBER_OF_TUBES, birdRadius, false);
 
         //Animation Engine
-        animationEngine = new AnimationEngine("num.atlas","bird.atlas", "toptube.png", "bottomtube.png","bg.png", mapEngine, gravityEngine, BIRD_TAG, birdRadius);
+        animationEngine = new AnimationEngine("num.atlas","bird.atlas", "toptube.png", "bottomtube.png","bg.png", "splashBg.png", "splashLogo.png", "startLogo.png","gameover.png", mapEngine, gravityEngine, BIRD_TAG, birdRadius);
     }
 
     @Override
@@ -67,20 +67,22 @@ public class Game extends ApplicationAdapter {
 
         switch(gameCoordinator.getAppState()) {
             case START:
-                Gdx.app.log("STATE","Showing Cover Screen...");
-                Gdx.app.log("STATE","Setting to ONGOING..");
-                gameCoordinator.setAppState(AppStateConstants.AppState.ONGOING);
+                animationEngine.animateSplashScreen();
+                if (TimeUtils.timeSinceMillis(startTime) > 2500) {
+                    gameCoordinator.setAppState(AppStateConstants.AppState.SETUP);
+                }
                 break;
             case SETUP:
-                mapEngine.resetTubes();
-                gravityEngine.resetOnModel(BIRD_TAG,GravityConstants.StartPositionX.MIDDLE, GravityConstants.StartPositionY.MIDDLE);
+                animationEngine.animateGame(0, gameCoordinator.getAppState());
                 if (Gdx.input.justTouched()) {
+                    mapEngine.resetTubes();
+                    gravityEngine.resetOnModel(BIRD_TAG,GravityConstants.StartPositionX.MIDDLE, GravityConstants.StartPositionY.MIDDLE);
                     Gdx.app.log("STATE","Setting to ONGOING..");
                     gameCoordinator.setAppState(AppStateConstants.AppState.ONGOING);
                 }
                 break;
             case ONGOING:
-                animationEngine.animateGame(gameCoordinator.getScore());
+                animationEngine.animateGame(gameCoordinator.getScore(), gameCoordinator.getAppState());
                 gameCoordinator.setBirdPosition(gravityEngine.getCoords(BIRD_TAG), birdRadius);
                 gameCoordinator.setTubePositions(mapEngine.getCoords() , distanceBetweenTubes);
                 if(gameCoordinator.getGameState()) {
@@ -93,20 +95,20 @@ public class Game extends ApplicationAdapter {
                     gravityEngine.calibrateCoords();
                     mapEngine.calibratePos();
 
-
                 } else {
                     Gdx.app.log("STATE","Setting to END..");
                     gameCoordinator.setAppState(AppStateConstants.AppState.END);
                 }
                 break;
             case END:
+                animationEngine.animateGame(gameCoordinator.getScore(), gameCoordinator.getAppState());
                 if (Gdx.input.justTouched()) {
                     Gdx.app.log("STATE","Setting to SETUP..");
                     gameCoordinator.setAppState(AppStateConstants.AppState.SETUP);
                 }
                 break;
         }
-
     }
 
 }
+
